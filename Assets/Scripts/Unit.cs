@@ -11,15 +11,20 @@ public class Unit : MonoBehaviour
 
     private Coroutine _lifeCycleCoroutine;
     private Coroutine _moveCoroutine;
-    private Vector3 _rotation;
+    private Vector3 _direction;
 
     public event Action<Unit> Died;
 
     public void OnEnable()
     {
-        if(_lifeCycleCoroutine == null)
+        if (_lifeCycleCoroutine == null)
         {
             _lifeCycleCoroutine = StartCoroutine(LifeCycle());
+        }
+
+        if (_moveCoroutine == null)
+        {
+            _moveCoroutine = StartCoroutine(Move());
         }
     }
 
@@ -40,26 +45,22 @@ public class Unit : MonoBehaviour
 
     public void Initialize(Vector2 rotation, Vector3 position)
     {
-        _rotation = new Vector3(rotation.x, 0, rotation.y);
+        _direction = new Vector3(rotation.x, 0, rotation.y).normalized;
         transform.position = position;
     }
 
     private IEnumerator LifeCycle()
     {
-        _moveCoroutine = StartCoroutine(Move());
-
         yield return new WaitForSeconds(UnityEngine.Random.Range(_minLifeTime, _maxLifeTime));
 
-        StopCoroutine(_moveCoroutine);
-        _moveCoroutine = null;
         Died?.Invoke(this);
     }
 
     private IEnumerator Move()
     {
-        while(true)
+        while(enabled)
         {
-            transform.Translate(_rotation * _speed*Time.deltaTime);
+            transform.Translate(_direction * _speed*Time.deltaTime);
             yield return null;
         }
     }

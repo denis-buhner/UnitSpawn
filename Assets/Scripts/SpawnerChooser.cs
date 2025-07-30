@@ -9,7 +9,7 @@ public class SpawnerChooser : MonoBehaviour
 
     private Coroutine _chooseSpawnerCoroutine;
 
-    private void Update()
+    private void OnEnable()
     {
         if (_chooseSpawnerCoroutine == null)
         {
@@ -17,15 +17,27 @@ public class SpawnerChooser : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (_chooseSpawnerCoroutine != null)
+        {
+            StopCoroutine( _chooseSpawnerCoroutine );
+            _chooseSpawnerCoroutine = null;
+        }
+    }
+
     private IEnumerator ChooseSpawner()
     {
-        yield return new WaitForSeconds(_chooseSpawnerDelay);
+        WaitForSeconds delay = new WaitForSeconds( _chooseSpawnerDelay );
 
-        if(_spawners.Count > 0 )
+        while(enabled)
         {
-            _spawners[Random.Range(0, _spawners.Count)].SpawnUnit();
-        }
+            yield return delay;
 
-        _chooseSpawnerCoroutine = null;
+            if (_spawners.Count > 0)
+            {
+                _spawners[Random.Range(0, _spawners.Count)].SpawnUnit();
+            }
+        }
     }
 }
