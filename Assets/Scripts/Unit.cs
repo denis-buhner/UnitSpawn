@@ -22,10 +22,6 @@ public class Unit : MonoBehaviour
             _lifeCycleCoroutine = StartCoroutine(LifeCycle());
         }
 
-        if (_moveCoroutine == null)
-        {
-            _moveCoroutine = StartCoroutine(Move());
-        }
     }
 
     private void OnDisable()
@@ -47,6 +43,21 @@ public class Unit : MonoBehaviour
     {
         _direction = new Vector3(rotation.x, 0, rotation.y).normalized;
         transform.position = position;
+
+        if (_moveCoroutine == null)
+        {
+            _moveCoroutine = StartCoroutine(Move());
+        }
+    }
+
+    public void Initialize(Target target, Vector3 position)
+    {
+        transform.position = position;
+
+        if (_moveCoroutine == null)
+        {
+            _moveCoroutine = StartCoroutine(Move(target));
+        }
     }
 
     private IEnumerator LifeCycle()
@@ -61,6 +72,15 @@ public class Unit : MonoBehaviour
         while(enabled)
         {
             transform.Translate(_direction * _speed*Time.deltaTime);
+            yield return null;
+        }
+    }
+
+    private IEnumerator Move(Target target)
+    {
+        while (enabled)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target.Position, _speed * Time.deltaTime);
             yield return null;
         }
     }

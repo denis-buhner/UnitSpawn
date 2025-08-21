@@ -36,7 +36,7 @@ public class SpawnerChooser : MonoBehaviour
 
             if (_spawners.Count > 0)
             {
-                _spawners[Random.Range(0, _spawners.Count)].SpawnUnit();
+                _spawners[Random.Range(0, _spawners.Count)].SpawnUnitWithTarget();
             }
         }
     }
