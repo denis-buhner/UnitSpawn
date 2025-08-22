@@ -1,12 +1,11 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Target : MonoBehaviour
 {
     [SerializeField][Range(min:1,max:10)] private float _movementRadius;
     [SerializeField] private float _movementSpeed;
-    [SerializeField] private float _movementError;
+    [SerializeField] private float _stoppingDistance;
 
     private Vector3 _waypoint1;
     private Vector3 _waypoint2;
@@ -39,19 +38,17 @@ public class Target : MonoBehaviour
     private IEnumerator Move()
     {
         Vector3 currentWayPoint = _waypoint1;
-        Vector3 currentPosition = transform.position;
 
         while (isActiveAndEnabled)
         {
-            while (Vector3.Distance(currentPosition, currentWayPoint) > _movementError)
+            while (IsCloseEnough(currentWayPoint, transform.position))
             {
-                currentPosition = Vector3.MoveTowards(currentPosition, currentWayPoint, _movementSpeed * Time.deltaTime);
-                transform.position = currentPosition;
+                transform.position = Vector3.MoveTowards(transform.position, currentWayPoint, _movementSpeed * Time.deltaTime);
 
                 yield return null;
             }
 
-            if(currentWayPoint == _waypoint1)
+            if (currentWayPoint == _waypoint1)
             {
                 currentWayPoint = _waypoint2;
             }
@@ -59,6 +56,11 @@ public class Target : MonoBehaviour
             {
                 currentWayPoint = _waypoint1;
             }
-        } 
+        }
+    }
+
+    private bool IsCloseEnough(Vector3 currentWayPoint, Vector3 currentPosition)
+    {
+        return (currentWayPoint - currentPosition).sqrMagnitude > _stoppingDistance * _stoppingDistance;
     }
 }

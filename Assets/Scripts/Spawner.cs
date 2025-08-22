@@ -12,12 +12,6 @@ public class Spawner : MonoBehaviour
         _pool = GetComponent<UnitPool>();
     }
 
-    public void SpawnUnit()
-    {
-        Unit unit = _pool.GetUnit();
-        unit.Initialize(Random.insideUnitCircle, transform.position);
-        unit.Died += DespawnUnit;
-    }
     public void SpawnUnitWithTarget()
     {
         Unit unit = _pool.GetUnit();
